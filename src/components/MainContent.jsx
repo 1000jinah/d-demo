@@ -11,6 +11,7 @@ import { ReactComponent as Export } from "assets/img/icon_export.svg";
 import LineAreaChart from "./Chart/LineArea";
 import DoughtChart from "./Chart/DoughtChart";
 import BarChart from "./Chart/BarChart";
+import DataDisplay from "api/DataDisplay";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -44,7 +45,7 @@ function a11yProps(index) {
   };
 }
 
-export default function MainContent({mainWidth}) {
+export default function MainContent({ mainWidth }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -91,6 +92,15 @@ export default function MainContent({mainWidth}) {
           <Tab
             label="Holdings Details"
             {...a11yProps(2)}
+            sx={{
+              textTransform: "capitalize",
+              "&.Mui-selected": { color: "#211d1d" },
+              color: "#b3b3b3",
+            }}
+          />
+           <Tab
+            label="API Test"
+            {...a11yProps(3)}
             sx={{
               textTransform: "capitalize",
               "&.Mui-selected": { color: "#211d1d" },
@@ -302,7 +312,7 @@ export default function MainContent({mainWidth}) {
         </Box>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-      <Box
+        <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -499,11 +509,11 @@ export default function MainContent({mainWidth}) {
           </Box>
         </Box>
         <Box>
-           <DoughtChart/>
+          <DoughtChart />
         </Box>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-      <Box
+        <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -700,8 +710,11 @@ export default function MainContent({mainWidth}) {
           </Box>
         </Box>
         <Box>
-           <BarChart/>
+          <BarChart />
         </Box>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        <DataDisplay />
       </CustomTabPanel>
     </Box>
   );

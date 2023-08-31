@@ -1,38 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
-import { fetchClassData } from "api/api";
+import { fetchData } from "api/api";
 import { Box, CircularProgress, Typography } from "@mui/material";
-
 const DoughtChart = () => {
   const [chartData, setChartData] = useState([]);
   const [isChartReady, setIsChartReady] = useState(false);
-
   useEffect(() => {
-    fetchClassData().then((data) => {
-      const classCounts = {
-        liquidity: 0,
-        fixedincome: 0,
-        alternative: 0,
-        equity: 0,
-      };
-
-      data.forEach((item) => {
-        const { strg_asset_class } = item;
-        if (classCounts.hasOwnProperty(strg_asset_class)) {
-          classCounts[strg_asset_class]++;
-        }
-      });
-
-      // Filter out classes with zero counts
-      const newChartData = Object.keys(classCounts)
-        .filter((className) => classCounts[className] > 0)
-        .map((className) => ({
-          name: className,
-          y: classCounts[className],
+    fetchData().then((data) => {
+      const filteredData = data.filter((item) => item.port_id === 22);
+      if (filteredData.length > 0) {
+        const newChartData = filteredData.map((item) => ({
+          name: item.stk_id.toString(),
+          // y: parseFloat(item.ap_weights), // Convert and format to 4 decimal places
+          y: parseFloat(item.weights.replace(/"/g, "") * 1),
         }));
-
-      setChartData(newChartData);
-      setIsChartReady(true);
+        setChartData(newChartData);
+        console.log(newChartData, "Ddd");
+        setIsChartReady(true);
+      }
     });
   }, []);
 

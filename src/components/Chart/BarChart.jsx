@@ -1,15 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import BarChartTable from "components/BarChartTable";
+import { fetchData } from "api/api";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 const BarChart = () => {
-    const colorOptions = ["#ff754b", "#b8dec3", "#f9e002", "#4bceff"];
+  const [chartData, setChartData] = useState([]);
+  const [isChartReady, setIsChartReady] = useState(false);
 
-    // Set the colors for the entire chart using Highcharts.setOptions
-    Highcharts.setOptions({
-      colors: colorOptions,
+  useEffect(() => {
+    fetchData().then((data) => {
+      // Sort the data by weight in descending order
+      const sortedData = data.sort((a, b) => b.weights - a.weights);
+
+      // Extract the top 10 items
+      const top10Data = sortedData.slice(0, 10);
+
+      const newChartData = top10Data.map((item) => ({
+        ticker: item.port_id,
+        name: item.stk_id,
+        data: item.weights ? parseFloat(item.weights.replace(/"/g, "") * 1) : 0,
+      }));
+
+      setChartData(newChartData);
+      console.log(newChartData, "Bar");
+      setIsChartReady(true);
     });
+  }, []);
+
+  const colorOptions = ["#ff754b", "#b8dec3", "#f9e002", "#4bceff"];
+  // Set the colors for the entire chart using Highcharts.setOptions
+  Highcharts.setOptions({
+    colors: colorOptions,
+  });
 
   const options = {
     chart: {
@@ -68,36 +92,36 @@ const BarChart = () => {
     },
     plotOptions: {
       series: {
-        stacking: "percent",
-        borderWidth: 20,
-        pointWidth: 20, // Adjust the width of the series bars
-        dataLabels: {
-          enabled: true,
-          format: "{point.y}%",
-          x: -5,
-          y: 25,
-          align: "right",
-        },
+        stacking: "normal",
       },
     },
-    series: [
-      { ticker: "VIG", name: "Vanguard Dividend Appreciation", data: [35] },
-      { ticker: "VIG", name: "Vanguard Dividend Appreciation", data: [25] },
-      { ticker: "VIG", name: "Vanguard Dividend Appreciation", data: [15] },
-      { ticker: "VIG", name: "Vanguard Dividend Appreciation", data: [13] },
-    ],
+    //     borderWidth: 20,
+    //     pointWidth: 20, // Adjust the width of the series bars
+    //     dataLabels: {
+    //       enabled: true,
+    //       format: "{point.y}%",
+    //       x: -5,
+    //       y: 25,
+    //       align: "right",
+    //     },
+    //   },
+    // },
+    series: chartData.map((dataItem, index) => ({
+      color: colorOptions[index % colorOptions.length],
+      name: dataItem.ticker,
+      data: [dataItem.data], // Wrap data in an array for stacking
+    })),
 
     credits: {
       enabled: false,
     },
   };
-  const seriesData = options.series.map((seriesItem, index) => ({
+  const seriesData = chartData.map((dataItem, index) => ({
     color: colorOptions[index % colorOptions.length],
-    ticker: seriesItem.ticker,
-    name: seriesItem.name,
-    data: seriesItem.data[0],
+    ticker: dataItem.ticker,
+    name: dataItem.name,
+    data: dataItem.data,
   }));
-
   // Apply the custom CSS to remove the highcharts-tick
   useEffect(() => {
     const style = document.createElement("style");
@@ -113,8 +137,25 @@ const BarChart = () => {
   }, []);
   return (
     <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-      <BarChartTable seriesData={seriesData} />
+      {isChartReady ? (
+        <div>
+          <HighchartsReact highcharts={Highcharts} options={options} />
+          <BarChartTable seriesData={seriesData} />
+        </div>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 200,
+          }}
+        >
+          <CircularProgress sx={{ mb: 3, color: "#ff754b" }} />
+          <Typography>Loading...</Typography>
+        </Box>
+      )}{" "}
     </div>
   );
 };

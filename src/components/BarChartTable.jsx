@@ -4,23 +4,29 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import { Box } from "@mui/material";
+import { Box, TableHead } from "@mui/material";
 
 export default function BarChartTable({ seriesData }) {
   return (
     <div>
-      <TableContainer>
+      <TableContainer sx={{ minWidth: 650, width: "50%", height: 220 }}>
         <Table
           sx={{
-            minWidth: 650,
-            width: "50%",
             ".MuiTableCell-root:last-child": {
               paddingRight: 0,
             },
           }}
           aria-label="legend table"
         >
-          <TableBody>
+          <TableHead stickyHeader >
+            <TableRow>
+              <TableCell>color</TableCell>
+              <TableCell>port_id</TableCell>
+              <TableCell>stk_id</TableCell>
+              <TableCell>weight</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{ overflowY: "auto" }}>
             {seriesData.map((seriesItem, index) => (
               <TableRow key={index}>
                 <TableCell>

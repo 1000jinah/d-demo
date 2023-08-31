@@ -10,13 +10,13 @@ const Main = () => {
     setShowSidebar(!showSidebar);
   };
   return (
-    <Box>
+    <Box sx={{ height: "100vh", overflow: "clip" }}>
       <Header toggleSideBar={toggleSideBar} onClick={toggleSideBar} />
       <Box
         sx={{
           display: "flex",
           width: "100%",
-          height: "calc(100vh - 38px)",
+          height: "100%",
           overflow: "clip",
         }}
       >
