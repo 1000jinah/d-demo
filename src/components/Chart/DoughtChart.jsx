@@ -15,7 +15,8 @@ const DoughtChart = () => {
         alternative: 0,
         equity: 0,
       };
-
+      
+      
       data.forEach((item) => {
         const { strg_asset_class } = item;
         if (classCounts.hasOwnProperty(strg_asset_class)) {
