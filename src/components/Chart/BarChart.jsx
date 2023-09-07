@@ -8,23 +8,50 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 const BarChart = () => {
   const [chartData, setChartData] = useState([]);
   const [isChartReady, setIsChartReady] = useState(false);
-
   useEffect(() => {
     fetchData().then((data) => {
-      // Sort the data by weight in descending order
-      const sortedData = data.sort((a, b) => b.weights - a.weights);
+      // Create a dictionary to store the sum of weights for each port_id and stk_id combination
+      const weightSumByPortAndStk = {};
 
-      // Extract the top 10 items
-      const top10Data = sortedData.slice(0, 10);
+      // Calculate the sum of weights for each port_id and stk_id
+      data.forEach((item) => {
+        const portId = item.port_id;
+        const stkId = item.stk_id;
+        const weight = parseFloat(item.weights.replace(/"/g, "")) || 0;
 
-      const newChartData = top10Data.map((item) => ({
-        ticker: item.port_id,
-        name: item.stk_id,
-        data: item.weights ? parseFloat(item.weights.replace(/"/g, "") * 1) : 0,
-      }));
+        if (!weightSumByPortAndStk[portId]) {
+          weightSumByPortAndStk[portId] = {};
+        }
+
+        if (!weightSumByPortAndStk[portId][stkId]) {
+          weightSumByPortAndStk[portId][stkId] = weight;
+        } else {
+          weightSumByPortAndStk[portId][stkId] += weight;
+        }
+      });
+
+      // Convert the dictionary into an array of objects
+      const newChartData = [];
+
+      Object.keys(weightSumByPortAndStk).forEach((portId) => {
+        Object.entries(weightSumByPortAndStk[portId]).forEach(([stkId, sum]) => {
+          newChartData.push({
+            ticker: portId,
+            name: stkId,
+            data: sum,
+          });
+        });
+      });
+
+      // Calculate the total sum of data
+      const totalSum = newChartData.reduce((sum, dataItem) => sum + dataItem.data, 0);
+
+      // Calculate data percentages (as a fraction of 100) and round to 2 decimal places
+      newChartData.forEach((dataItem) => {
+        dataItem.data = ((dataItem.data / totalSum) * 100).toFixed(2);
+      });
 
       setChartData(newChartData);
-      console.log(newChartData, "Bar");
       setIsChartReady(true);
     });
   }, []);
@@ -63,16 +90,17 @@ const BarChart = () => {
       },
     },
     xAxis: {
-      categories: ["Honey composition"],
+      categories: [""],
       visible: false,
     },
     yAxis: {
       labels: {
-        enabled: false,
+        format: "{value}%", // Display y-axis labels as percentages
       },
       visible: false,
       reversed: true,
       min: 0,
+      max: 100, // Set the maximum value of the y-axis to 100%
       title: {
         text: null,
       },
@@ -81,13 +109,11 @@ const BarChart = () => {
       enabled: false,
       useHTML: true,
       labelFormatter: function () {
-        // const pointData = this.yData[0];
-        const percent = Highcharts.numberFormat(this.yData[0], 1);
+        const percent = this.yData[0];
         const ticker = this.userOptions.ticker;
-        const percentSymbol = String.fromCharCode(37); // Unicode value for the percentage symbol
         const color = this.color;
 
-        return `<div class="legend-table"><table style="width:100%"><tr><td style="color:${color}; font-size:22px;">&#9679;</td><td>${ticker}</td><td>${this.name}</td><td>${percent}${percentSymbol}</td></tr></table></div>`;
+        return `<div class="legend-table"><table style="width:100%"><tr><td style="color:${color}; font-size:22px;">&#9679;</td><td>${ticker}</td><td>${this.name}</td><td>${percent}%</td></tr></table></div>`;
       },
     },
     plotOptions: {
@@ -95,33 +121,23 @@ const BarChart = () => {
         stacking: "normal",
       },
     },
-    //     borderWidth: 20,
-    //     pointWidth: 20, // Adjust the width of the series bars
-    //     dataLabels: {
-    //       enabled: true,
-    //       format: "{point.y}%",
-    //       x: -5,
-    //       y: 25,
-    //       align: "right",
-    //     },
-    //   },
-    // },
     series: chartData.map((dataItem, index) => ({
       color: colorOptions[index % colorOptions.length],
-      name: dataItem.ticker,
-      data: [dataItem.data], // Wrap data in an array for stacking
+      name: dataItem.name,
+      data: [parseFloat(dataItem.data)], // Wrap data in an array for stacking
     })),
-
     credits: {
       enabled: false,
     },
   };
+
   const seriesData = chartData.map((dataItem, index) => ({
     color: colorOptions[index % colorOptions.length],
     ticker: dataItem.ticker,
     name: dataItem.name,
-    data: dataItem.data,
+    data: parseFloat(dataItem.data),
   }));
+
   // Apply the custom CSS to remove the highcharts-tick
   useEffect(() => {
     const style = document.createElement("style");
@@ -135,6 +151,7 @@ const BarChart = () => {
       document.head.removeChild(style);
     };
   }, []);
+
   return (
     <div>
       {isChartReady ? (
@@ -155,7 +172,7 @@ const BarChart = () => {
           <CircularProgress sx={{ mb: 3, color: "#ff754b" }} />
           <Typography>Loading...</Typography>
         </Box>
-      )}{" "}
+      )}
     </div>
   );
 };

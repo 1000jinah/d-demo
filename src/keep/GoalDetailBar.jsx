@@ -4,28 +4,23 @@ import NonLinearSlider from "./SideSlideBar/SideSlideBar";
 
 const SlideArray = [
   {
-    title: "How old are you?",
-    type: "Age",
-  },
-  {
-    title: "At what age would you like to retire?",
-    type: "Age",
-  },
-  {
-    title:
-      " how much monthly income will ",
+    title: "Target Amount",
     type: "USD",
   },
   {
-    title: "sum towards retirement?",
+    title: "Initial Investment Amount",
     type: "USD",
   },
   {
-    title: "monthly basis?",
+    title: "Monthly Investment Amount",
     type: "USD",
   },
   {
-    title: "Investment risk level",
+    title: "Monthly Income",
+    type: "USD",
+  },
+  {
+    title: "Investment Period",
     type: "Year",
   },
 ];
