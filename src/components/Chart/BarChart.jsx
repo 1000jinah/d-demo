@@ -34,17 +34,22 @@ const BarChart = () => {
       const newChartData = [];
 
       Object.keys(weightSumByPortAndStk).forEach((portId) => {
-        Object.entries(weightSumByPortAndStk[portId]).forEach(([stkId, sum]) => {
-          newChartData.push({
-            ticker: portId,
-            name: stkId,
-            data: sum,
-          });
-        });
+        Object.entries(weightSumByPortAndStk[portId]).forEach(
+          ([stkId, sum]) => {
+            newChartData.push({
+              ticker: portId,
+              name: stkId,
+              data: sum,
+            });
+          }
+        );
       });
 
       // Calculate the total sum of data
-      const totalSum = newChartData.reduce((sum, dataItem) => sum + dataItem.data, 0);
+      const totalSum = newChartData.reduce(
+        (sum, dataItem) => sum + dataItem.data,
+        0
+      );
 
       // Calculate data percentages (as a fraction of 100) and round to 2 decimal places
       newChartData.forEach((dataItem) => {
@@ -93,6 +98,7 @@ const BarChart = () => {
       categories: [""],
       visible: false,
     },
+    
     yAxis: {
       labels: {
         format: "{value}%", // Display y-axis labels as percentages
