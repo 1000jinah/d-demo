@@ -98,7 +98,6 @@ const BarChart = () => {
       categories: [""],
       visible: false,
     },
-    
     yAxis: {
       labels: {
         format: "{value}%", // Display y-axis labels as percentages
