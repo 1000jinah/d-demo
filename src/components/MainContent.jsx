@@ -45,7 +45,7 @@ function a11yProps(index) {
   };
 }
 
-export default function MainContent({ mainWidth }) {
+export default function MainContent({ mainWidth, chartData,secondChartData, lineData, xAxisStart, xAxisEnd}) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -308,7 +308,11 @@ export default function MainContent({ mainWidth }) {
           </Box>
         </Box>
         <Box>
-          <LineAreaChart />
+          <LineAreaChart  chartData={chartData}
+            secondChartData={secondChartData}
+            lineData={lineData}
+            xAxisStart={xAxisStart}
+            xAxisEnd={xAxisEnd} />
         </Box>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>

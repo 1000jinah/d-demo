@@ -22,4 +22,5 @@ export const fetchClassData = async () => {
   }
 };
 
+
 export default api;

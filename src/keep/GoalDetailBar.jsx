@@ -1,26 +1,31 @@
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
-import NonLinearSlider from "./SideSlideBar/SideSlideBar";
+import NonLinearSlider from "../components/SideSlideBar/SideSlideBar";
 
 const SlideArray = [
   {
-    title: "Target Amount",
+    title: "How old are you?",
+    type: "Age",
+  },
+  {
+    title: "At what age would you like to retire?",
+    type: "Age",
+  },
+  {
+    title:
+      " how much monthly income will ",
     type: "USD",
   },
   {
-    title: "Initial Investment Amount",
+    title: "sum towards retirement?",
     type: "USD",
   },
   {
-    title: "Monthly Investment Amount",
+    title: "monthly basis?",
     type: "USD",
   },
   {
-    title: "Monthly Income",
-    type: "USD",
-  },
-  {
-    title: "Investment Period",
+    title: "Investment risk level",
     type: "Year",
   },
 ];

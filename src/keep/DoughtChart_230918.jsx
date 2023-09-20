@@ -8,34 +8,33 @@ const DoughtChart = () => {
   const [isChartReady, setIsChartReady] = useState(false);
 
   useEffect(() => {
-    fetchClassData()
-      .then((data) => {
-        const classCounts = {
-          liquidity: 0,
-          fixedincome: 0,
-          alternative: 0,
-          equity: 0,
-        };
+    fetchClassData().then((data) => {
+      const classCounts = {
+        liquidity: 0,
+        fixedincome: 0,
+        alternative: 0,
+        equity: 0,
+      };
+      
+      
+      data.forEach((item) => {
+        const { strg_asset_class } = item;
+        if (classCounts.hasOwnProperty(strg_asset_class)) {
+          classCounts[strg_asset_class]++;
+        }
+      });
 
-        data.forEach((item) => {
-          const { strg_asset_class } = item;
-          if (classCounts.hasOwnProperty(strg_asset_class)) {
-            classCounts[strg_asset_class]++;
-          }
-        });
+      // Filter out classes with zero counts
+      const newChartData = Object.keys(classCounts)
+        .filter((className) => classCounts[className] > 0)
+        .map((className) => ({
+          name: className,
+          y: classCounts[className],
+        }));
 
-        // Filter out classes with zero counts
-        const newChartData = Object.keys(classCounts)
-          .filter((className) => classCounts[className] > 0)
-          .map((className) => ({
-            name: className,
-            y: classCounts[className],
-          }));
-
-        setChartData(newChartData);
-        setIsChartReady(true);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
+      setChartData(newChartData);
+      setIsChartReady(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -133,22 +132,11 @@ const DoughtChart = () => {
       document.head.removeChild(style);
     };
   }, []);
-  const totalSum = chartData.reduce((sum, item) => sum + item.y, 0);
+
   return (
     <div>
       {isChartReady ? (
-        <div>
-          <Box sx={{ display: "flex" }}>
-            <Typography sx={{ mr: 1 }}>조건: </Typography>
-            {chartData.map((item) => (
-              <Box sx={{ pr: 1 }} key={item.name}>
-                {item.name}: {item.y} ({((item.y / totalSum) * 100).toFixed(2)}
-                %),
-              </Box>
-            ))}
-          </Box>
-          <div id="container"></div>
-        </div>
+        <div id="container"></div>
       ) : (
         <Box
           sx={{

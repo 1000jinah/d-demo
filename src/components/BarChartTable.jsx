@@ -21,8 +21,9 @@ export default function BarChartTable({ seriesData }) {
           <TableHead stickyHeader >
             <TableRow>
               <TableCell>color</TableCell>
-              <TableCell>port_id</TableCell>
+              <TableCell>rebal_dt</TableCell>
               <TableCell>stk_id</TableCell>
+              <TableCell>ticker</TableCell>
               <TableCell>weight</TableCell>
             </TableRow>
           </TableHead>
@@ -39,8 +40,9 @@ export default function BarChartTable({ seriesData }) {
                     }}
                   ></Box>
                 </TableCell>
-                <TableCell>{seriesItem.ticker}</TableCell>
+                <TableCell>{seriesItem.date}</TableCell>
                 <TableCell>{seriesItem.name}</TableCell>
+                <TableCell>{seriesItem.ticker}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>
                   {seriesItem.data}%
                 </TableCell>
