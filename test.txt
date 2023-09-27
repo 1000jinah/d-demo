@@ -1,0 +1,103 @@
+  // 230925 - 3
+  const calculateChartData = () => {
+    let currentAmount = annualSavings;
+    const calculatedData = Array.from({ length: xAxisEnd - xAxisStart + 1 });
+
+    for (let i = 0; i <= xAxisEnd - xAxisStart; i++) {
+      calculatedData[i] = currentAmount;
+      switch (investmentRiskLevel) {
+        case 0: // Low
+          currentAmount *= 1.05;
+          break;
+        case 1: // Low-Moderate
+          currentAmount *= 1.07;
+          break;
+        case 2: // Moderate
+          currentAmount *= 1.08;
+          break;
+        case 3: // Moderate-High
+          currentAmount *= 1.09;
+          break;
+        case 4: // High
+          currentAmount *= 1.1;
+          break;
+        default:
+          break;
+      }
+      currentAmount += annualSavings;
+    }
+
+    return calculatedData;
+  };
+
+  const chartData = calculateChartData();
+
+  const secondChartData = chartData.map((value) => value / 2);
+
+  const lineData = Array.from({ length: xAxisEnd - xAxisStart + 1 }, (_, i) => newLineValue);
+
+ // 230925 - 1
+  // const chartData = Array.from({ length: xAxisEnd + 1 }, (_, i) =>
+  //   sliderValue + (initialAmount + (annualSavings * (i - xAxisStart) * 12))
+  // );
+
+  // const secondChartData = chartData.map((value) => value / 2); // 새로운 Area 차트 데이터
+
+  // const lineData = Array.from({ length: xAxisEnd + 1 }, (_, i) => newLineValue);
+
+  // 230922
+  // const chartLogiData = Array.from(
+  //   { length: xAxisEnd + 1 },
+  //   (_, i) =>
+  //     sliderValue +
+  //     initialLogiAmount +
+  //     annualLogiSavings * 12 * Math.pow(2, i / 12)
+  // );
+
+  // const secondLogiData = chartLogiData.map((value, index) => value * 2);
+  // const targetLogiData = Array.from(
+  //   { length: xAxisEnd + 1 },
+  //   (_, i) => newLineLogiValue
+  // );
+
+  //
+
+  // 230925 - 2
+  const calculateChartData = () => {
+    let currentAmount = annualSavings;
+    const calculatedData = Array.from({ length: xAxisEnd - xAxisStart });
+
+    for (let i = xAxisStart; i <= xAxisEnd ; i++) {
+      calculatedData[i - xAxisStart] = currentAmount;
+
+      switch (investmentRiskLevel) {
+        case 0: // Low
+          currentAmount *= 1.05;
+          console.log(i,currentAmount);
+          break;
+        case 1: // Low-Moderate
+          currentAmount *= 1.07;
+          break;
+        case 2: // Moderate
+          currentAmount *= 1.08;
+          break;
+        case 3: // Moderate-High
+          currentAmount *= 1.09;
+          break;
+        case 4: // High
+          currentAmount *= 1.1;
+          break;
+        default:
+          break;
+      }
+      currentAmount += annualSavings;
+    }
+
+    return calculatedData;
+  };
+
+  const chartData = calculateChartData();
+
+  const secondChartData = chartData.map((value) => value / 2);
+
+  const lineData = Array.from({ length: xAxisEnd + 1 }, (_, i) => newLineValue);

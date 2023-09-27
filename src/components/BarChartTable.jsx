@@ -22,7 +22,7 @@ export default function BarChartTable({ seriesData }) {
             <TableRow>
               <TableCell>color</TableCell>
               <TableCell>rebal_dt</TableCell>
-              <TableCell>stk_id</TableCell>
+              {/* <TableCell>stk_id</TableCell> */}
               <TableCell>ticker</TableCell>
               <TableCell>weight</TableCell>
             </TableRow>
@@ -41,7 +41,7 @@ export default function BarChartTable({ seriesData }) {
                   ></Box>
                 </TableCell>
                 <TableCell>{seriesItem.date}</TableCell>
-                <TableCell>{seriesItem.name}</TableCell>
+                {/* <TableCell>{seriesItem.name}</TableCell> */}
                 <TableCell>{seriesItem.ticker}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>
                   {seriesItem.data}%

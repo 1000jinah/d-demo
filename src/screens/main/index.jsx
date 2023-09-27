@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Header from "components/Header";
 import MainContent from "components/MainContent";
 import SliderComponent from "components/SideSlideBar/SideSlideBar";
+
 const riskLevelLabels = [
-  "No Risk",
-  "Very Low",
   "Low",
+  "Low-Moderate",
   "Moderate",
+  "Moderate-High",
   "High",
-  "Very High",
 ];
+
 const Main = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [xAxisStart, setXAxisStart] = useState(0);
   const [xAxisEnd, setXAxisEnd] = useState(0);
+
   const [initialAmount, setInitialAmount] = useState(0);
   const [annualSavings, setAnnualSavings] = useState(0);
-  const [sliderValue, setSliderValue] = useState(0);
   const [newLineValue, setNewLineValue] = useState(0);
   const [investmentRiskLevel, setInvestmentRiskLevel] = useState(0);
 
@@ -44,13 +45,58 @@ const Main = () => {
   const handleInvestmentRiskLevelChange = (event, newValue) => {
     setInvestmentRiskLevel(newValue);
   };
+  const toggleSideBar = () => {
+    setShowSidebar(!showSidebar);
+  };
+  // investmentRiskLevel에 따라 annualSavings를 조정
+  let adjustedAnnualSavings = Array.isArray(annualSavings)
+    ? [...annualSavings]
+    : [annualSavings]; // 배열로 변환
+
+  switch (investmentRiskLevel) {
+    case 0: // Low
+      adjustedAnnualSavings = adjustedAnnualSavings.map(
+        (value) => value * 1.05
+      );
+      break;
+    case 1: // Low-Moderate
+      adjustedAnnualSavings = adjustedAnnualSavings.map(
+        (value) => value * 1.07
+      );
+      break;
+    case 2: // Moderate
+      adjustedAnnualSavings = adjustedAnnualSavings.map(
+        (value) => value * 1.08
+      );
+      break;
+    case 3: // Moderate-High
+      adjustedAnnualSavings = adjustedAnnualSavings.map(
+        (value) => value * 1.09
+      );
+      break;
+    case 4: // High
+      adjustedAnnualSavings = adjustedAnnualSavings.map((value) => value * 1.1);
+      break;
+    default:
+      break;
+  }
+
+  const totalAmount =
+    initialAmount +
+    adjustedAnnualSavings.reduce((acc, val) => acc + val, 0) *
+      (xAxisEnd - xAxisStart) *
+      12;
+  const formattedTotalAmount = totalAmount.toLocaleString("en-US", {
+    maximumFractionDigits: 2,
+  });
+
   const sliders = [
     {
       label: "현재 당신은 몇 살 입니까?",
       value: xAxisStart,
       onChange: handleXAxisStartChange,
-      min: 0,
-      max: xAxisEnd - 1,
+      min: 18,
+      max: 64, // xAxisEnd - 1
       step: 1,
       displayValue: `${xAxisStart} Age`,
     },
@@ -58,8 +104,8 @@ const Main = () => {
       label: "은퇴",
       value: xAxisEnd,
       onChange: handleXAxisEndChange,
-      min: xAxisStart + 1,
-      max: 100,
+      min: 31, // xAxisStart + 1
+      max: 80,
       step: 1,
       displayValue: `${xAxisEnd} Age`,
     },
@@ -68,7 +114,7 @@ const Main = () => {
       value: initialAmount,
       onChange: handleInitialAmountChange,
       min: 0,
-      max: 100,
+      max: 50000,
       step: 1,
       displayValue: `${initialAmount} USD`,
     },
@@ -77,7 +123,7 @@ const Main = () => {
       value: annualSavings,
       onChange: handleAnnualSavingsChange,
       min: 0,
-      max: xAxisEnd,
+      max: 30000, // xAxisEnd
       step: 1,
       displayValue: `${annualSavings} USD`,
     },
@@ -86,7 +132,7 @@ const Main = () => {
       value: newLineValue,
       onChange: handleNewLineValueChange,
       min: 0,
-      max: 100,
+      max: 1000000,
       step: 1,
       displayValue: `${newLineValue} USD`,
     },
@@ -100,24 +146,43 @@ const Main = () => {
       displayValue: riskLevelLabels[investmentRiskLevel],
     },
   ];
+
   const sliderComponents = sliders.map((slider, index) => (
     <SliderComponent key={index} {...slider} />
   ));
+  let riskMultiplier;
 
-  const chartData = Array.from(
-    { length: xAxisEnd + 1 },
-    (_, i) =>
-      xAxisStart * ((sliderValue + initialAmount) / 100) +
-      (i + xAxisStart) * (annualSavings / 100)
-  );
+  switch (investmentRiskLevel) {
+    case 0:
+      riskMultiplier = 1.05;
+      break;
+    case 1:
+      riskMultiplier = 1.07;
+      break;
+    case 2:
+      riskMultiplier = 1.08;
+      break;
+    case 3:
+      riskMultiplier = 1.09;
+      break;
+    case 4:
+      riskMultiplier = 1.1;
+      break;
+    default:
+  }
+  //230925 - 1
+
+
+  const chartData = Array.from({ length: xAxisEnd + 1 }, (_, i) => {
+    let currentAnnual = annualSavings;
+    let currentSavings = (currentAnnual *= riskMultiplier);
+    return initialAmount + currentSavings * (i - xAxisStart) * 12;
+  });
 
   const secondChartData = chartData.map((value) => value / 2); // 새로운 Area 차트 데이터
 
   const lineData = Array.from({ length: xAxisEnd + 1 }, (_, i) => newLineValue);
 
-  const toggleSideBar = () => {
-    setShowSidebar(!showSidebar);
-  };
   return (
     <Box sx={{ height: "100vh", overflow: "clip" }}>
       <Header toggleSideBar={toggleSideBar} onClick={toggleSideBar} />
@@ -132,11 +197,10 @@ const Main = () => {
         {showSidebar && (
           <Box
             sx={{
-              //   sideBarWidth={showSidebar ? "20%" : 350}
-              // minSideBarWidth={showSidebar ? 350 : 350}
               width: showSidebar ? "20%" : 350,
               minWidth: showSidebar ? 350 : 350,
               height: "100%",
+              overflowY: "auto",
               backgroundColor: "#f7f7f7",
             }}
           >
@@ -146,7 +210,6 @@ const Main = () => {
                 display: "flex",
 
                 flexDirection: "column",
-                // justifyContent: "space-between",
               }}
             >
               <Typography
@@ -174,20 +237,6 @@ const Main = () => {
                 }}
               >
                 {sliderComponents}
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#000000",
-                    color: "#ffffff",
-                    borderRadius: 0,
-                    textTransform: "capitalize",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    minWidth: "100%",
-                  }}
-                >
-                  Calculate
-                </Button>
               </Box>
             </Box>
           </Box>
@@ -200,6 +249,8 @@ const Main = () => {
           lineData={lineData}
           xAxisStart={xAxisStart}
           xAxisEnd={xAxisEnd}
+          newLineValue={newLineValue}
+          formattedTotalAmount={formattedTotalAmount}
         ></MainContent>
       </Box>
     </Box>

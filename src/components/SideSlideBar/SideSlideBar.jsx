@@ -1,45 +1,9 @@
 // SliderComponent.jsx
 import React from "react";
-import Slider from "@mui/material/Slider";
-import Typography from "@mui/material/Typography";
 import FlexBetween from "components/FlexBetween";
+import { Box, Slider, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Box } from "@mui/material";
-// function ValueLabelComponent(props) {
-//   const { children, value } = props;
 
-//   return (
-//     <Tooltip enterTouchDelay={0} placement="top" title={value}>
-//       {children}
-//     </Tooltip>
-//   );
-// }
-
-// ValueLabelComponent.propTypes = {
-//   children: PropTypes.element.isRequired,
-//   value: PropTypes.number.isRequired,
-// };
-
-const marksArray = [
-  {
-    value: 0,
-  },
-  {
-    value: 20,
-  },
-  {
-    value: 40,
-  },
-  {
-    value: 60,
-  },
-  {
-    value: 80,
-  },
-  {
-    value: 100,
-  },
-];
 const IOSSlider = styled(Slider)(({ theme }) => ({
   color: theme.palette.mode === "dark" ? "#211d1d" : "#211d1d",
   padding: "15px 0",
@@ -87,17 +51,27 @@ const IOSSlider = styled(Slider)(({ theme }) => ({
     width: 1,
   },
 }));
+
 const SliderComponent = ({
   label,
   value,
   onChange,
   min,
   max,
-  step,
   displayValue,
+  calculateValue, // Access the calculateValue function here
+  valueLabelFormat,
 }) => {
+  const marks = [
+    { value: min },
+    { value: (max - min) / 4 + min },
+    { value: ((max - min) / 4) * 2 + min },
+    { value: ((max - min) / 4) * 3 + min },
+    // { value: ((max - min) / 5) * 4 + min },
+    { value: max,  },
+  ];
   return (
-    <Box sx={{ width: "100%", py: 3 }}>
+    <Box sx={{ width: "100%", py: 3.5 }}>
       <FlexBetween mb={1.5}>
         <Typography
           variant="span"
@@ -116,13 +90,16 @@ const SliderComponent = ({
       </FlexBetween>
 
       <IOSSlider
-        marks={marksArray}
+        marks={marks}
         value={value}
         onChange={onChange}
         min={min}
         max={max}
-        // step={step}
+        scale={calculateValue}
+        getAriaValueText={valueLabelFormat}
+        valueLabelFormat={valueLabelFormat}
         aria-labelledby={`${label.toLowerCase().replace(/ /g, "-")}-slider`}
+        valueLabelDisplay="off"
       />
     </Box>
   );

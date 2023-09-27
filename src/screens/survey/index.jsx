@@ -378,7 +378,7 @@ const Survey = () => {
     if (currentIndex === 0 && selectedItemIndex !== null) {
       canContinue = true;
       setSelectedValue(currentData); // Set selected value
-      console.log(currentData.title, "aadad");
+      console.log(currentData.title, "When you choose THE FIRST BOXES");
     } else if (currentIndex === 1) {
       const radioName = `radio_${currentIndex}`;
       const selectedRadio = document.querySelector(
@@ -403,13 +403,31 @@ const Survey = () => {
     }
 
     if (canContinue) {
+      const radioName = `radio_${currentIndex}`;
+      const selectedRadio = document.querySelector(
+        `input[name="${radioName}"]:checked`
+      );
       const updatedResultData = [...resultData];
+      console.log(updatedResultData, "updatedResultData");
       updatedResultData[currentIndex] = selectedValue;
+      console.log(selectedValue, "updatedResultData[currentIndex]");
       setResultData(updatedResultData);
       setCurrentIndex(currentIndex + 1);
-      setSelectedItemIndex(null); // Reset selected item index
-      setInputValue(""); // Reset input value
-      console.log(updatedResultData);
+      setSelectedValue(currentData);
+      setSelectedItemIndex(selectedRadio); // Reset selected item index
+
+      // 새로운 부분: 설문 문항의 라디오 체크 유무 확인
+
+      console.log(`Current Index: ${currentIndex}`);
+      console.log(`Is Radio Checked: ${!!selectedRadio}`);
+      console.log(`=====================================`);
+      if (currentIndex === surveyData.length - 1) {
+        // 모든 설문이 완료되었을 때, 로컬 스토리지에 데이터 저장
+        localStorage.setItem(
+          "survey-demo-result",
+          JSON.stringify(updatedResultData)
+        );
+      }
     }
   };
   const handleChange = (event) => {
@@ -441,7 +459,6 @@ const Survey = () => {
       setCurrentIndex(currentIndex - 1);
     }
   };
-
 
   return (
     <Box
@@ -721,7 +738,7 @@ const Survey = () => {
               id="standard-basic"
               placeholder="Example: Sending our youngest to college"
               variant="standard"
-              value={inputValue} // Add this line
+              value={inputValue} // 수정된 부분
               onChange={handleInputChange} // Add this line
             />
           </Box>
@@ -766,7 +783,9 @@ const Survey = () => {
                         `input[name="radio_${currentIndex}"]:checked`
                       )
                     ? "#211d1d"
-                    : "#808080",
+                    : selectedItemIndex === null
+                    ? "#808080"
+                    : "#211d1d",
 
                 color: "#ffffff",
                 textTransform: "capitalize",
@@ -820,3 +839,4 @@ const Survey = () => {
 };
 
 export default Survey;
+// const storedResultData = JSON.parse(localStorage.getItem("survey-demo-result"));

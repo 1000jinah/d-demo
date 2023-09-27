@@ -12,6 +12,8 @@ import LineAreaChart from "./Chart/LineArea";
 import DoughtChart from "./Chart/DoughtChart";
 import BarChart from "./Chart/BarChart";
 import DataDisplay from "api/DataDisplay";
+import LineRoundChart from "./Chart/LineRoundChart";
+// import LogiChart from "../keep/LogiChart";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -45,7 +47,15 @@ function a11yProps(index) {
   };
 }
 
-export default function MainContent({ mainWidth, chartData,secondChartData, lineData, xAxisStart, xAxisEnd}) {
+export default function MainContent({
+  mainWidth,
+  chartData,
+  secondChartData,
+  lineData,
+  xAxisStart,
+  xAxisEnd,
+  formattedTotalAmount
+}) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -98,7 +108,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
               color: "#b3b3b3",
             }}
           />
-           <Tab
+          <Tab
             label="API Test"
             {...a11yProps(3)}
             sx={{
@@ -232,7 +242,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Goal Risk Score
             </Typography>
             <Box>
               <Typography
@@ -264,7 +274,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Required Return
             </Typography>
             <Box>
               <Typography
@@ -290,7 +300,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Expected Return
             </Typography>
             <Box>
               <Typography
@@ -308,11 +318,21 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
           </Box>
         </Box>
         <Box>
-          <LineAreaChart  chartData={chartData}
+          {/* <LineRoundChart
+            chartData={chartData}
             secondChartData={secondChartData}
             lineData={lineData}
             xAxisStart={xAxisStart}
-            xAxisEnd={xAxisEnd} />
+            xAxisEnd={xAxisEnd}
+            formattedTotalAmount={formattedTotalAmount}
+          /> */}
+          <LineAreaChart
+            chartData={chartData}
+            secondChartData={secondChartData}
+            lineData={lineData}
+            xAxisStart={xAxisStart}
+            xAxisEnd={xAxisEnd}
+          />
         </Box>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
@@ -437,7 +457,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Goal Risk Score
             </Typography>
             <Box>
               <Typography
@@ -469,7 +489,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Required Return
             </Typography>
             <Box>
               <Typography
@@ -495,7 +515,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Expected Return
             </Typography>
             <Box>
               <Typography
@@ -514,6 +534,13 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
         </Box>
         <Box>
           <DoughtChart />
+          {/* <LogiChart
+            xAxisStart={xAxisStart}
+            xAxisEnd={xAxisEnd}
+            chartLogiData={chartLogiData}
+            secondLogiData={secondLogiData}
+            targetLogiData={targetLogiData}
+          /> */}
         </Box>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
@@ -638,7 +665,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Goal Risk Score
             </Typography>
             <Box>
               <Typography
@@ -670,7 +697,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Required Return
             </Typography>
             <Box>
               <Typography
@@ -696,7 +723,7 @@ export default function MainContent({ mainWidth, chartData,secondChartData, line
             }}
           >
             <Typography sx={{ color: "#b3b3b3", fontSize: 14, mb: 0.5 }}>
-              Your Risk Score
+              Expected Return
             </Typography>
             <Box>
               <Typography
